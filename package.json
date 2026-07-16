@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-icons": "^5.7.0",
@@ -21,5 +25,18 @@
     "@vitejs/plugin-react": "^6.0.3",
     "oxlint": "^1.71.0",
     "vite": "^8.1.1"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agrawaldd-1/Mediflow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agrawaldd-1/Mediflow/issues"
+  },
+  "homepage": "https://github.com/agrawaldd-1/Mediflow#readme"
 }
