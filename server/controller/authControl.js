@@ -1,4 +1,4 @@
-import { User } from "../models/user";
+import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -15,7 +15,7 @@ export const loginUser = async (req, res) => {
         }
 
         // Find User
-        const user = await User.findOne({ email: email.tolowercase() });
+        const user = await User.findOne({ email: email.toLowerCase() });
         console.log("User:", user);
         if (!user) {
             return res.status(401).json({
