@@ -1,6 +1,7 @@
 import express from "express";
 import authRoutes from "./router/authRoutes.js"
 import authPatients from "./router/patientRoutes.js";
+import authDoctors from "./router/doctorRoutes.js"
 import cors from "cors";
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/patients" , authPatients);
+app.use("/api/doctors",authDoctors);
 app.get("/", (req, res) => {
     res.send("Server Running...")
 })
