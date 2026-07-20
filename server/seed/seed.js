@@ -5,23 +5,29 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./server/.env" });
 await connect_db();
-const doctor = {
-    name: "Dr. John Smith",
-    email: "doctor@mediflow.com",
-    password: "12345678",
-    role: "doctor",
-    isActive: true
-};
 
+const admin = {
+    name: "Admin",
+    email: "admin@mediflow.com",
+    password: "admin_123",
+    role: "admin",
+    isActive: true
+}
 const receptionist = {
     name: "Reception Desk",
     email: "reception@mediflow.com",
-    password: "12345678",
-    role: "receptionist",
-    isActive: true
-};
+    password : "12345678",
+    role : "receptionist",
+    isActive : true
+}
 
 
+const existingAdmin = await User.findOne({ role: "admin" });
+
+if (existingAdmin) {
+    console.log("Admin already exists");
+    process.exit();
+}
 
 const registerUser = async (person) => {
     const existingUser = await User.findOne({ email: person.email.toLowerCase() });
@@ -44,5 +50,7 @@ const registerUser = async (person) => {
     console.log(`${user.name} register successfully`)
 }
 
-await registerUser(doctor);
+await registerUser(admin);
 await registerUser(receptionist);
+
+
