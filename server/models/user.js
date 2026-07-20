@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     role : {
         type : String,
         required : true,
-        enum: ["patient", "doctor", "receptionist"]
+        enum: ["patient", "doctor", "receptionist","admin"]
     },
     isActive : {
         type : Boolean,
