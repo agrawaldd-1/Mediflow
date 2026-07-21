@@ -104,7 +104,7 @@ export const bookAppointment = async (req, res) => {
         });
     }
 }
-const cancelAppointment = async (req, res) => {
+export const cancelAppointment = async (req, res) => {
     try {
         const { id } = req.params;
         const existingAppointment = await Appointment.findById(id);
@@ -147,7 +147,7 @@ const cancelAppointment = async (req, res) => {
 
 }
 
-const completeAppointment = async (req, res) => {
+export const completeAppointment = async (req, res) => {
     try {
 
         const { id } = req.params;
@@ -284,4 +284,36 @@ export const getDoctorsAvailability = async (req, res) => {
             message: "Internal Server Error",
         });
     }
+}
+
+export const getAllAppointments = async(req,res)=>{
+    try{
+    
+    const currentDateTime = new Date();
+    const appointments = await Appointment.find({appointmentDateTime :{$gte : currentDateTime}}).sort({appointmentDateTime : 1})
+    .populate({path : "patientId" , populate : {path : "userId" ,select : "name"}})
+    .populate({path : "doctorId" , populate : {path : "userId" , select : "name"}})
+
+    if(appointments.length == 0){
+        return res.status(200).json({
+            success : true,
+            count : 0,
+            message : "No new appointments"
+        })
+    }
+    return res.status(200).json({
+        success : true,
+        count : appointments.length,
+        appointments
+    })
+}
+
+catch(error){
+    console.error("Error fetching Appointments:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+}
 }

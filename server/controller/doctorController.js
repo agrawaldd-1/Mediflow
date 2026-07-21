@@ -4,8 +4,8 @@ import { User } from "../models/user.js";
 
 export const registerDoctor = async (req, res) => {
     try {
-        const { name, email, password, specialization, qualification, experience, consultationFee } = req.body;
-        if (!name || !email || !password || !specialization || !qualification || !experience || !consultationFee) {
+        const { name, email, password, specialization, qualification, experience, consultationFee , workingHours } = req.body;
+        if (!name || !email || !password || !specialization || !qualification || !experience || !consultationFee || !workingHours) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -34,7 +34,8 @@ export const registerDoctor = async (req, res) => {
             specialization,
             qualification,
             experience,
-            consultationFee
+            consultationFee,
+            workingHours
         })
 
         return res.status(201).json({
