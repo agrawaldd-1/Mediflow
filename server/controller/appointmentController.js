@@ -2,6 +2,8 @@ import { Patient } from "../models/patients.js";
 import { User } from "../models/user.js";
 import { Doctor } from "../models/doctors.js";
 import { Appointment } from "../models/appointments.js";
+import { MdCalendarToday } from "react-icons/md";
+import mongoose from "mongoose";
 
 export const bookAppointment = async (req, res) => {
     try {
@@ -286,34 +288,153 @@ export const getDoctorsAvailability = async (req, res) => {
     }
 }
 
-export const getAllAppointments = async(req,res)=>{
-    try{
-    
-    const currentDateTime = new Date();
-    const appointments = await Appointment.find({appointmentDateTime :{$gte : currentDateTime}}).sort({appointmentDateTime : 1})
-    .populate({path : "patientId" , populate : {path : "userId" ,select : "name"}})
-    .populate({path : "doctorId" , populate : {path : "userId" , select : "name"}})
+export const getAllAppointments = async (req, res) => {
+    try {
 
-    if(appointments.length == 0){
+        const currentDateTime = new Date();
+        const appointments = await Appointment.find({ appointmentDateTime: { $gte: currentDateTime } }).sort({ appointmentDateTime: 1 })
+            .populate({ path: "patientId", populate: { path: "userId", select: "name" } })
+            .populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+
+        if (appointments.length == 0) {
+            return res.status(200).json({
+                success: true,
+                count: 0,
+                message: "No new appointments"
+            })
+        }
         return res.status(200).json({
-            success : true,
-            count : 0,
-            message : "No new appointments"
+            success: true,
+            count: appointments.length,
+            appointments
         })
     }
-    return res.status(200).json({
-        success : true,
-        count : appointments.length,
-        appointments
-    })
+
+    catch (error) {
+        console.error("Error fetching Appointments:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
 }
 
-catch(error){
-    console.error("Error fetching Appointments:", error);
+export const getTodayAppointment = async (req, res) => {
+    try {
+        const today = new Date();
+        const startOfDay = new Date(today);
+        startOfDay.setHours(0, 0, 0, 0);
 
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+        const endOfDay = new Date(today);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const doctor = await Doctor.findOne({ userId: req.user.id });
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: "Doctor not found"
+            })
+        }
+        const appointment = await Appointment.find({
+            doctorId: doctor._id,
+            appointmentDateTime: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            },
+            status: "Booked"
+        }).sort({ appointmentDateTime: 1 }).populate({ path: "patientId", populate: { path: "userId", select: "name" } })
+
+        return res.status(200).json({
+            success: true,
+            appointment
+        })
+    }
+    catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+
+    }
 }
-}
+
+
+
+export const getPatientDetails = async (req, res) => {
+    try {
+        console.log(req.params);
+
+        const { appointmentId } = req.params;
+        console.log("appointmentId:", appointmentId);
+
+        console.log(
+            mongoose.Types.ObjectId.isValid(appointmentId)
+        );
+
+        // Validate Appointment ID
+        if (!mongoose.Types.ObjectId.isValid(appointmentId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Appointment ID",
+            });
+        }
+
+        // Find Appointment
+        const appointment = await Appointment.findById(appointmentId);
+
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: "Appointment not found",
+            });
+        }
+
+        // Find Logged-in Doctor
+        const doctor = await Doctor.findOne({ userId: req.user.id });
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: "Doctor not found",
+            });
+        }
+
+        // Authorization Check
+        if (!appointment.doctorId.equals(doctor._id)) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to access this patient's details.",
+            });
+        }
+
+        // Populate Patient Details after Authorization
+        await appointment.populate({
+            path: "patientId",
+            populate: {
+                path: "userId",
+                select: "name email phone",
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            patient: appointment.patientId,
+            appointment: {
+                appointmentDateTime: appointment.appointmentDateTime,
+                reasonForVisit: appointment.reasonForVisit,
+                status: appointment.status,
+            },
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+}; 
