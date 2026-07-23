@@ -1,6 +1,6 @@
 import express from "express"
 import { authorize , protect } from "../Middleware/authMiddleware.js"
-import { bookAppointment , cancelAppointment, completeAppointment, getAllAppointments, getDoctorsAvailability, getPatientDetails, getTodayAppointment} from "../controller/appointmentController.js"
+import { bookAppointment , cancelAppointment, completeAppointment, getAllAppointments, getDoctorsAvailability, getPatientDetails, getTodayAppointment, upcomingAppointments} from "../controller/appointmentController.js"
  
 
 const router = express.Router();
@@ -11,4 +11,5 @@ router.get("/doctor/:doctorId/availability" , protect , authorize(["receptionist
 router.get("/" , protect , authorize(["doctor" , "receptionist"]) ,getAllAppointments)
 router.get("/doctor/today" , protect , authorize(["doctor"]), getTodayAppointment)
 router.get("/:appointmentId/patient" , protect , authorize(["doctor" , "receptionist"]),getPatientDetails);
+router.get("/patient/upcoming" , protect , authorize(["patient"]) , upcomingAppointments);
 export default router;

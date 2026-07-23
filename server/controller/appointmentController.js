@@ -437,4 +437,39 @@ export const getPatientDetails = async (req, res) => {
             message: "Internal Server Error",
         });
     }
-}; 
+};
+
+export const upcomingAppointments = async (req, res) => {
+    try {
+        const patient = await Patient.findOne({ userId: req.user.id })
+        if (!patient) {
+            return res.status(404).json({
+                success: false,
+                message: "Patient not found"
+            })
+        }
+        const currentDate = new Date();
+        const appointment = await Appointment.find({ patientId: patient._id, status: "Booked", appointmentDateTime: { $gte: currentDate } })
+            .sort({ appointmentDateTime: 1 }).populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+        if (appointment.length == 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Appointment not found"
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            appointment
+        })
+    }
+
+    catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+}

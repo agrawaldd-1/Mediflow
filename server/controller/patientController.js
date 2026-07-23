@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt"
 import { Patient } from "../models/patients.js";
 import { User } from "../models/user.js";
+import { Doctor } from "../models/doctors.js";
+import { Appointment } from "../models/appointments.js";
+import { Prescription } from "../models/prescription.js";
+// import mongoose from "mongoose";
 
 export const registerPatient = async (req, res) => {
   try {
@@ -132,15 +136,15 @@ export const searchPatient = async (req, res) => {
   }
 }
 
-export const getPatientById = async(req,res) => {
+export const getPatientById = async (req, res) => {
   try {
     const { id } = req.params;
     const patient = await Patient.findById(id).populate("userId", "name email")
-    if(!patient){
+    if (!patient) {
       return res.status(404).json({
-                success: false,
-                message: "patient not found",
-            });
+        success: false,
+        message: "patient not found",
+      });
     }
     return res.status(200).json({
       success: true,
@@ -155,4 +159,72 @@ export const getPatientById = async(req,res) => {
       message: "Internal Server Error",
     });
   }
+}
+
+export const medicalHistory = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ userId: req.user.id })
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient not found"
+      })
+    }
+    const appointments = await Appointment.find({ patientId: patient._id, status: "Completed" }).populate({ path: "doctorId", populate: { path: "userId", select: "name" }, select: "specialization" }).sort({ appointmentDateTime: -1 })
+    if (appointments.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No medical history found."
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      medicalHistory: appointments
+    });
+  }
+  catch (error) {
+    console.error("Error fetching patients:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+
+export const getPatientProfile = async(req,res)=>{
+  try{
+  const patient = await Patient.findOne({userId : req.user.id}).populate("userId" , "name email")
+  if(!patient){
+    return res.status(404).json({
+      success : false,
+      message: "Patient not found"
+    })
+  }
+
+ return res.status(200).json({
+    success: true,
+    patient: {
+        name: patient.userId.name,
+        email: patient.userId.email,
+        phone: patient.phone,
+        gender: patient.gender,
+        dateOfBirth: patient.dateOfBirth,
+        bloodGroup: patient.bloodGroup,
+        address: patient.address,
+        emergencyContact: patient.emergencyContact
+    }
+});
+}
+catch (error) {
+    console.error("Error fetching patients:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+
+
 }
