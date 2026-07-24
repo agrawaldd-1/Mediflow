@@ -4,7 +4,7 @@ import { User } from "../models/user.js";
 import { Doctor } from "../models/doctors.js";
 import { Appointment } from "../models/appointments.js";
 import { Prescription } from "../models/prescription.js";
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 export const registerPatient = async (req, res) => {
   try {
@@ -193,19 +193,19 @@ export const medicalHistory = async (req, res) => {
 }
 
 
-export const getPatientProfile = async(req,res)=>{
-  try{
-  const patient = await Patient.findOne({userId : req.user.id}).populate("userId" , "name email")
-  if(!patient){
-    return res.status(404).json({
-      success : false,
-      message: "Patient not found"
-    })
-  }
+export const getPatientProfile = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ userId: req.user.id }).populate("userId", "name email")
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient not found"
+      })
+    }
 
- return res.status(200).json({
-    success: true,
-    patient: {
+    return res.status(200).json({
+      success: true,
+      patient: {
         name: patient.userId.name,
         email: patient.userId.email,
         phone: patient.phone,
@@ -214,10 +214,10 @@ export const getPatientProfile = async(req,res)=>{
         bloodGroup: patient.bloodGroup,
         address: patient.address,
         emergencyContact: patient.emergencyContact
-    }
-});
-}
-catch (error) {
+      }
+    });
+  }
+  catch (error) {
     console.error("Error fetching patients:", error);
 
     return res.status(500).json({
@@ -228,3 +228,221 @@ catch (error) {
 
 
 }
+
+
+export const updatePatientProfile = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(patientId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Patient ID",
+      });
+    }
+
+    const patient = await Patient.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient not found.",
+      });
+    }
+
+    const user = await User.findById(patient.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    const {
+      name,
+      gender,
+      dateOfBirth,
+      bloodGroup,
+      phone,
+      address,
+      emergencyContactName,
+      emergencyContactPhone,
+    } = req.body;
+
+    if (
+      !name ||
+      !gender ||
+      !dateOfBirth ||
+      !bloodGroup ||
+      !phone ||
+      !address ||
+      !emergencyContactName ||
+      !emergencyContactPhone
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required.",
+      });
+    }
+
+    const normalizedName = name.trim();
+    const normalizedAddress = address.trim();
+    const normalizedEmergencyContactName = emergencyContactName.trim();
+
+    if (!normalizedName) {
+      return res.status(400).json({
+        success: false,
+        message: "Patient name cannot be empty.",
+      });
+    }
+
+    if (!normalizedAddress) {
+      return res.status(400).json({
+        success: false,
+        message: "Address cannot be empty.",
+      });
+    }
+
+    if (!normalizedEmergencyContactName) {
+      return res.status(400).json({
+        success: false,
+        message: "Emergency contact name cannot be empty.",
+      });
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number must contain exactly 10 digits.",
+      });
+    }
+
+    if (!/^\d{10}$/.test(emergencyContactPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Emergency contact phone must contain exactly 10 digits.",
+      });
+    }
+
+    const today = new Date();
+
+    if (new Date(dateOfBirth) > today) {
+      return res.status(400).json({
+        success: false,
+        message: "Date of birth cannot be in the future.",
+      });
+    }
+
+    user.name = normalizedName;
+
+    patient.gender = gender;
+    patient.dateOfBirth = dateOfBirth;
+    patient.bloodGroup = bloodGroup;
+    patient.phone = phone;
+    patient.address = normalizedAddress;
+    patient.emergencyContactName = normalizedEmergencyContactName;
+    patient.emergencyContactPhone = emergencyContactPhone;
+
+    await Promise.all([
+      user.save(),
+      patient.save(),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Patient details updated successfully.",
+      data: {
+        id: patient._id,
+        name: user.name,
+        email: user.email,
+        gender: patient.gender,
+        dateOfBirth: patient.dateOfBirth,
+        bloodGroup: patient.bloodGroup,
+        phone: patient.phone,
+        address: patient.address,
+        emergencyContactName: patient.emergencyContactName,
+        emergencyContactPhone: patient.emergencyContactPhone,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error updating patient:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+export const updatePatientStatus = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { isActive } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(patientId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Patient ID",
+      });
+    }
+
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({
+        success: false,
+        message: "isActive must be true or false.",
+      });
+    }
+
+    const patient = await Patient.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient not found.",
+      });
+    }
+
+    const user = await User.findById(patient.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    if (user.isActive === isActive) {
+      return res.status(400).json({
+        success: false,
+        message: `Patient is already ${
+          isActive ? "active" : "inactive"
+        }.`,
+      });
+    }
+
+    user.isActive = isActive;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Patient ${
+        isActive ? "activated" : "deactivated"
+      } successfully.`,
+      data: {
+        patientId: patient._id,
+        name: user.name,
+        email: user.email,
+        isActive: user.isActive,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating patient status:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};

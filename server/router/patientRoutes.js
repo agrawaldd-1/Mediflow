@@ -1,5 +1,5 @@
 import express from "express"
-import { registerPatient , getAllPatients, searchPatient, getPatientById, medicalHistory, getPatientProfile } from "../controller/patientController.js";
+import { registerPatient , getAllPatients, searchPatient, getPatientById, medicalHistory, getPatientProfile , updatePatientProfile , updatePatientStatus } from "../controller/patientController.js";
 import { protect , authorize } from "../Middleware/authMiddleware.js";
 const router = express.Router();
 
@@ -9,6 +9,9 @@ router.get("/search" , protect, authorize(["receptionist"]) , searchPatient)
 router.get("/:id",protect, authorize(["receptionist"]) , getPatientById)
 router.get("/medicalHistory" , protect , authorize(["patient"]) , medicalHistory)
 router.get("/profile" , protect , authorize(["patient"]) , getPatientProfile)
+router.put("/:patientId",protect,authorize(["admin", "receptionist"]),updatePatientProfile);
+router.patch("/:patientId/status",protect,authorize(["admin"]),updatePatientStatus);
+
 
 
 
