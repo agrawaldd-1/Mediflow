@@ -1,15 +1,49 @@
-import express from "express"
-import { authorize , protect } from "../Middleware/authMiddleware.js"
-import { bookAppointment , cancelAppointment, completeAppointment, getAllAppointments, getDoctorsAvailability, getPatientDetails, getTodayAppointment, upcomingAppointments} from "../controller/appointmentController.js"
- 
+import express from "express";
+import {
+    getDoctorsAvailability,
+    getAllAppointments,
+    getTodayAppointment,
+    getPatientDetails,
+    upcomingAppointments,
+} from "../controllers/appointmentController.js";
+
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-router.post("/" ,protect , authorize(["receptionist"]) , bookAppointment )
-router.patch("/:id/cancel" , protect , authorize(["receptionist"]) , cancelAppointment)
-router.patch("/:id/complete" , protect , authorize(["doctor"]) , completeAppointment)
-router.get("/doctor/:doctorId/availability" , protect , authorize(["receptionist"]) , getDoctorsAvailability)
-router.get("/" , protect , authorize(["doctor" , "receptionist"]) ,getAllAppointments)
-router.get("/doctor/today" , protect , authorize(["doctor"]), getTodayAppointment)
-router.get("/:appointmentId/patient" , protect , authorize(["doctor" , "receptionist"]),getPatientDetails);
-router.get("/patient/upcoming" , protect , authorize(["patient"]) , upcomingAppointments);
+
+router.get(
+    "/doctor/:doctorId/availability",
+    protect,
+    authorize(["receptionist"]),
+    getDoctorsAvailability
+);
+
+router.get(
+    "/",
+    protect,
+    authorize(["receptionist"]),
+    getAllAppointments
+);
+
+router.get(
+    "/today",
+    protect,
+    authorize(["doctor"]),
+    getTodayAppointment
+);
+
+router.get(
+    "/:appointmentId/patient",
+    protect,
+    authorize(["doctor"]),
+    getPatientDetails
+);
+
+router.get(
+    "/upcoming",
+    protect,
+    authorize(["patient"]),
+    upcomingAppointments
+);
+
 export default router;
