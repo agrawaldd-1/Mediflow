@@ -14,7 +14,6 @@ export const registerReceptionist = async (req, res) => {
       address,
     } = req.body;
 
-    // Validation
     if (
       !name ||
       !email ||
@@ -41,7 +40,38 @@ export const registerReceptionist = async (req, res) => {
       });
     }
 
-    // Check existing user
+    if (!/^\d{10}$/.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number must contain exactly 10 digits.",
+      });
+    }
+
+    const validGenders = ["Male", "Female", "Other"];
+
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid gender.",
+      });
+    }
+
+    const dob = new Date(dateOfBirth);
+
+    if (isNaN(dob.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid date of birth.",
+      });
+    }
+
+    if (dob > new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "Date of birth cannot be in the future.",
+      });
+    }
+
     const existingUser = await User.findOne({
       email: normalizedEmail,
     });
@@ -53,10 +83,8 @@ export const registerReceptionist = async (req, res) => {
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create User
     const user = await User.create({
       name: normalizedName,
       email: normalizedEmail,
@@ -64,11 +92,10 @@ export const registerReceptionist = async (req, res) => {
       role: "receptionist",
     });
 
-    // Create Receptionist Profile
     const receptionist = await Receptionist.create({
       userId: user._id,
       gender,
-      dateOfBirth,
+      dateOfBirth: dob,
       phone,
       address: normalizedAddress,
     });
@@ -87,8 +114,9 @@ export const registerReceptionist = async (req, res) => {
         address: receptionist.address,
       },
     });
+
   } catch (error) {
-    console.error("Error registering receptionist:", error);
+    console.error("Register Receptionist Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -100,36 +128,64 @@ export const registerReceptionist = async (req, res) => {
 export const searchReceptionist = async (req, res) => {
   try {
     const { name } = req.query;
+
     if (!name) {
       return res.status(400).json({
         success: false,
-        message: "Search query is required."
-      })
+        message: "Search query is required.",
+      });
+    }
+
+    const search = name.trim();
+
+    if (!search) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query cannot be empty.",
+      });
     }
 
     const users = await User.find({
       name: {
-        $regex: name,
-        $options: "i"
+        $regex: search,
+        $options: "i",
       },
-      role : "receptionist"
-    })
-    const receptionist = await Receptionist.find({ userId: { $in: users.map(user => user._id) } }).populate("userId", "name email")
+      role: "receptionist",
+    });
+
+    const receptionists = await Receptionist.find({
+      userId: {
+        $in: users.map((user) => user._id),
+      },
+    }).populate({
+      path: "userId",
+      select: "name email isActive",
+    });
+
+    if (receptionists.length === 0) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        receptionists: [],
+        message: "No receptionist found.",
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      data : receptionist
-    })
-  }
-  catch (error) {
-    console.error("Error fetching receptionist:", error);
+      count: receptionists.length,
+      receptionists,
+    });
+
+  } catch (error) {
+    console.error("Search Receptionist Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error.",
     });
   }
-}
+};
 
 export const updateReceptionist = async (req, res) => {
   try {
@@ -138,7 +194,7 @@ export const updateReceptionist = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(receptionistId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Receptionist ID",
+        message: "Invalid receptionist ID.",
       });
     }
 
@@ -173,7 +229,7 @@ export const updateReceptionist = async (req, res) => {
       !gender ||
       !dateOfBirth ||
       !phone ||
-      !address 
+      !address
     ) {
       return res.status(400).json({
         success: false,
@@ -183,7 +239,6 @@ export const updateReceptionist = async (req, res) => {
 
     const normalizedName = name.trim();
     const normalizedAddress = address.trim();
-    
 
     if (!normalizedName) {
       return res.status(400).json({
@@ -199,8 +254,6 @@ export const updateReceptionist = async (req, res) => {
       });
     }
 
-    
-
     if (!/^\d{10}$/.test(phone)) {
       return res.status(400).json({
         success: false,
@@ -208,11 +261,25 @@ export const updateReceptionist = async (req, res) => {
       });
     }
 
-    
+    const validGenders = ["Male", "Female", "Other"];
 
-    const today = new Date();
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid gender.",
+      });
+    }
 
-    if (new Date(dateOfBirth) > today) {
+    const dob = new Date(dateOfBirth);
+
+    if (isNaN(dob.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid date of birth.",
+      });
+    }
+
+    if (dob > new Date()) {
       return res.status(400).json({
         success: false,
         message: "Date of birth cannot be in the future.",
@@ -222,12 +289,9 @@ export const updateReceptionist = async (req, res) => {
     user.name = normalizedName;
 
     receptionist.gender = gender;
-    receptionist.dateOfBirth = dateOfBirth;
-    
+    receptionist.dateOfBirth = dob;
     receptionist.phone = phone;
     receptionist.address = normalizedAddress;
-    
-    
 
     await Promise.all([
       user.save(),
@@ -238,7 +302,8 @@ export const updateReceptionist = async (req, res) => {
       success: true,
       message: "Receptionist details updated successfully.",
       data: {
-        id: receptionist._id,
+        receptionistId: receptionist._id,
+        userId: user._id,
         name: user.name,
         email: user.email,
         gender: receptionist.gender,
@@ -249,11 +314,11 @@ export const updateReceptionist = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error updating receptionist:", error);
+    console.error("Update Receptionist Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error.",
     });
   }
 };
@@ -266,14 +331,14 @@ export const updateReceptionistStatus = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(receptionistId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Receptionist ID",
+        message: "Invalid receptionist ID.",
       });
     }
 
     if (typeof isActive !== "boolean") {
       return res.status(400).json({
         success: false,
-        message: "isActive must be true or false.",
+        message: "isActive must be either true or false.",
       });
     }
 
@@ -282,7 +347,7 @@ export const updateReceptionistStatus = async (req, res) => {
     if (!receptionist) {
       return res.status(404).json({
         success: false,
-        message: "receptionist not found.",
+        message: "Receptionist not found.",
       });
     }
 
@@ -296,11 +361,10 @@ export const updateReceptionistStatus = async (req, res) => {
     }
 
     if (user.isActive === isActive) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        message: `receptionist is already ${
-          isActive ? "active" : "inactive"
-        }.`,
+        message: `Receptionist is already ${isActive ? "active" : "inactive"
+          }.`,
       });
     }
 
@@ -310,23 +374,112 @@ export const updateReceptionistStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Receptionist ${
-        isActive ? "activated" : "deactivated"
-      } successfully.`,
+      message: `Receptionist ${isActive ? "activated" : "deactivated"
+        } successfully.`,
       data: {
         receptionistId: receptionist._id,
+        userId: user._id,
         name: user.name,
         email: user.email,
         isActive: user.isActive,
       },
     });
+
   } catch (error) {
-    console.error("Error updating Receptionist status:", error);
+    console.error("Update Receptionist Status Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error.",
     });
   }
 };
 
+export const getReceptionistDashboard = async (req, res) => {
+  try {
+    const today = new Date();
+
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const [doctorAppointments, pendingPayments] = await Promise.all([
+
+      Appointment.aggregate([
+        {
+          $match: {
+            appointmentDateTime: {
+              $gte: startOfDay,
+              $lte: endOfDay,
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$doctorId",
+            totalAppointments: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "doctors",
+            localField: "_id",
+            foreignField: "_id",
+            as: "doctor",
+          },
+        },
+        {
+          $unwind: "$doctor",
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "doctor.userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $project: {
+            _id: 0,
+            doctorName: "$user.name",
+            totalAppointments: 1,
+          },
+        },
+        {
+          $sort: {
+            totalAppointments: -1,
+          },
+        },
+      ]),
+
+      Invoice.countDocuments({
+        paymentStatus: "Pending",
+      }),
+
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      dashboard: {
+        doctorAppointments,
+        pendingPayments,
+      },
+    });
+
+  } catch (error) {
+    console.error("Get Receptionist Dashboard Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
