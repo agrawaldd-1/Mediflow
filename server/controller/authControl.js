@@ -4,49 +4,51 @@ import jwt from "jsonwebtoken";
 
 export const loginUser = async (req, res) => {
     try {
-        const { email, password} = req.body;
+        const { email, password } = req.body;
 
-        // Validation
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Email and Password are required",
+                message: "Email and password are required.",
             });
         }
 
-        // Find User
-        const user = await User.findOne({ email: email.toLowerCase() });
-        console.log("User:", user);
+        const normalizedEmail = email.trim().toLowerCase();
+
+        const user = await User.findOne({
+            email: normalizedEmail,
+        });
+
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid email or password.",
             });
         }
 
-        // Compare Password
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Entered Password:", password);
-        console.log("Stored Password:", user.password);
-        console.log("Password Match:", isMatch);
+        const isPasswordMatched = await bcrypt.compare(
+            password,
+            user.password
+        );
 
-        if (!isMatch) {
+        if (!isPasswordMatched) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid email or password.",
             });
         }
-        if(!user.isActive){
+
+        if (!user.isActive) {
             return res.status(403).json({
                 success: false,
-                message: "Your account has been deactivated. Please contact the hospital administration."
-            })
+                message: "Your account has been deactivated. Please contact the hospital administration.",
+            });
         }
-        // Generate JWT
+
         const token = jwt.sign(
             {
                 id: user._id,
-                role: user.role
+                role: user.role,
             },
             process.env.JWT_SECRET,
             {
@@ -56,41 +58,48 @@ export const loginUser = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Login successful",
+            message: "Login successful.",
             token,
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
             },
         });
-        
+
     } catch (error) {
-        console.error(error);
+        console.error("Login User Error:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Internal Server Error.",
         });
     }
 };
 
-// Protected Route
 export const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
 
         return res.status(200).json({
             success: true,
             user,
         });
+
     } catch (error) {
-        console.error(error);
+        console.error("Get Profile Error:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Internal Server Error.",
         });
     }
 };
