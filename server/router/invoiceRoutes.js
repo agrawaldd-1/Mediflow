@@ -1,16 +1,15 @@
 import express from "express";
 import {
     generateInvoice,
-    viewInvoice,
     searchInvoice,
     updatePaymentStatus,
+    viewInvoice,
 } from "../controller/invoiceController.js";
 
 import { protect, authorize } from "../Middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Generate Invoice
 router.post(
     "/",
     protect,
@@ -18,7 +17,6 @@ router.post(
     generateInvoice
 );
 
-// Search Invoice
 router.get(
     "/search",
     protect,
@@ -26,7 +24,6 @@ router.get(
     searchInvoice
 );
 
-// View Single Invoice
 router.get(
     "/:invoiceNumber",
     protect,
@@ -34,7 +31,6 @@ router.get(
     viewInvoice
 );
 
-// Update Payment Status
 router.patch(
     "/:invoiceNumber/payment-status",
     protect,
