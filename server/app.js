@@ -5,7 +5,8 @@ import authDoctors from "./router/doctorRoutes.js"
 import authAppointments from "./router/appointmentRoutes.js"
 import authPrescription from "./router/prescriptionRoutes.js"
 import cors from "cors";
-import adminRoutes from "./routes/adminRoutes.js";
+import adminRoutes from "./router/adminRouter.js";
+import invoiceRoutes from "./router/invoiceRoutes.js"
 const app = express();
 
 
@@ -20,6 +21,7 @@ app.use("/api/doctors",authDoctors);
 app.use("/api/appointments",authAppointments)
 app.use("/api/prescription",authPrescription)
 app.use("/api/admin", adminRoutes);
+app.use("/api/invoice" , invoiceRoutes);
 app.get("/", (req, res) => {
     res.send("Server Running...")
 })

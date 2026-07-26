@@ -18,13 +18,6 @@ router.post(
     registerReceptionist
 );
 
-// Get All Receptionists
-router.get(
-    "/",
-    protect,
-    authorize(["admin"]),
-    getAllReceptionists
-);
 
 // Search Receptionist
 router.get(
@@ -34,13 +27,7 @@ router.get(
     searchReceptionist
 );
 
-// Get Receptionist By ID
-router.get(
-    "/:id",
-    protect,
-    authorize(["admin"]),
-    getReceptionistById
-);
+
 
 // Update Receptionist Profile
 router.put(
