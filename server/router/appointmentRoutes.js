@@ -5,7 +5,7 @@ import {
     getTodayAppointment,
     getPatientDetails,
     upcomingAppointments,
-} from "../controllers/appointmentController.js";
+} from "../controller/appointmentController.js";
 
 import { protect, authorize } from "../middleware/authMiddleware.js";
 

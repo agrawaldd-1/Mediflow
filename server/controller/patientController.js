@@ -209,6 +209,53 @@ export const getPatientById = async (req, res) => {
         });
     }
 };
+export const searchPatient = async (req, res) => {
+    try {
+        const searchQuery = req.query.query?.trim();
+
+        if (!searchQuery) {
+            return res.status(400).json({
+                success: false,
+                message: "Search query is required.",
+            });
+        }
+
+        const patients = await Patient.find({
+            $or: [
+                { phone: { $regex: searchQuery, $options: "i" } },
+                { bloodGroup: { $regex: searchQuery, $options: "i" } },
+            ],
+        })
+            .populate({
+                path: "userId",
+                match: {
+                    name: { $regex: searchQuery, $options: "i" },
+                },
+                select: "name email isActive",
+            });
+
+        const filteredPatients = patients.filter(
+            (patient) =>
+                patient.userId ||
+                patient.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.bloodGroup.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        return res.status(200).json({
+            success: true,
+            count: filteredPatients.length,
+            data: filteredPatients,
+        });
+
+    } catch (error) {
+        console.error("Search Patient Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error.",
+        });
+    }
+};
 
 export const medicalHistory = async (req, res) => {
     try {
