@@ -7,8 +7,12 @@ import Doctors from "./components/Doctors"
 import Testimonials from "./components/Testimonials"
 import Emergency from "./components/Emergency"
 import Footer from "./components/Footer"
+import Login from "./Login.jsx";
+import { createBrowserRouter, RouterContextProvider, RouterProvider, useNavigate } from 'react-router-dom'
+
 
 const App = () => {
+ 
   return (
     <>
       <Hero/>
@@ -18,6 +22,7 @@ const App = () => {
       <Testimonials/>
       <Emergency/>
       <Footer/>
+      
       
     </>
   );
