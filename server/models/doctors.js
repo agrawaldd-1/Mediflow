@@ -30,11 +30,11 @@ const doctorSchema = new mongoose.Schema({
     },
     workingHours: {
         start: {
-            type : Number,
+            type : String,
             required : true 
         },
         end: {
-            type : Number , 
+            type : String , 
             required : true
         }
     }
