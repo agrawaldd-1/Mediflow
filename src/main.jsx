@@ -6,10 +6,18 @@ import { createBrowserRouter, RouterContextProvider, RouterProvider, useNavigate
 import Login from './Login.jsx'
 import DoctorDashboard from './Dashboards/DoctorDashboard.jsx'
 import PatientDashboard from './Dashboards/PatientDashboard.jsx'
-import AdminDashboard  from './Dashboards/AdminDashboard.jsx'
-import ReceptionistDashboard  from './Dashboards/ReceptionistDashboard.jsx'
+import AdminDashboard from './Dashboards/AdminDashboard.jsx'
+import ReceptionistDashboard from './Dashboards/ReceptionistDashboard.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import ProtectedRoute from './routes/ProtectedRoutes.jsx'
+import RegisterDoctor from './components/registerDoctor.jsx'
+import AdminLayout from './Layout/AdminLayout.jsx'
+import SearchDoctor from './components/SearchDoctor.jsx'
+import UpdateDoctorProfile from './components/UpdateDoctorProfile.jsx'
+import AllDoctors from './components/AllDoctors.jsx'
+import RegisterReceptionist from './components/RegisterReceptionist.jsx'
+import SearchReceptionist from './components/SearchReceptionist.jsx'
+import UpdateReceptionistProfile from './components/UpdateReceptionistProfile.jsx'
 const router = createBrowserRouter([
   {
     path: "/", element: <App />,
@@ -36,12 +44,49 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/admin/dashboard",
+    path: "/admin/",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminDashboard />
+        <AdminLayout />
       </ProtectedRoute>
-    )
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />
+      },
+      {
+        path: "register-doctor",
+        element: (
+          <RegisterDoctor />
+        )
+      },
+      {
+        path: "doctors/search",
+        element: <SearchDoctor />
+      },
+      {
+        path: "doctors/update-profile/:doctorId",
+        element: <UpdateDoctorProfile />
+      },
+      {
+        path : "all-doctors",
+        element : <AllDoctors/>
+      },
+      {
+        path : "register-receptionist",
+        element : <RegisterReceptionist/>
+      },
+      {
+        path : "receptionist/search",
+        element : <SearchReceptionist/>
+      },
+      {
+        path : "receptionist/update-profile/:receptionistId",
+        element : <UpdateReceptionistProfile/>
+      }
+
+    ]
   },
   {
     path: "/receptionist/dashboard",
@@ -50,7 +95,8 @@ const router = createBrowserRouter([
         <ReceptionistDashboard />
       </ProtectedRoute>
     )
-  }
+  },
+
 ])
 createRoot(document.getElementById('root')).render(
   <StrictMode>

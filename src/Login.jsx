@@ -21,7 +21,7 @@ const Login = () => {
     const redirectByRole = (role) => {
         switch (role) {
             case "admin":
-                navigate("/admin/dashboard");
+                navigate("/admin/");
                 break;
 
             case "receptionist":
