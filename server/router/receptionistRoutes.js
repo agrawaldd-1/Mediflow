@@ -5,6 +5,7 @@ import {
     searchReceptionist,
     updateReceptionist,
     updateReceptionistStatus,
+    getReceptionistById
 } from "../controller/receptionistController.js";
 
 import { protect, authorize } from "../Middleware/authMiddleware.js";
@@ -44,6 +45,13 @@ router.get(
     protect,
     authorize(["receptionist"]),
     getReceptionistDashboard
+);
+
+router.get(
+    "/:receptionistId",
+    protect,
+    authorize(["admin"]),
+    getReceptionistById
 );
 
 export default router;

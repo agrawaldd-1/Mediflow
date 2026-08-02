@@ -324,6 +324,9 @@ export const updateReceptionist = async (req, res) => {
 };
 
 export const updateReceptionistStatus = async (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+
   try {
     const { receptionistId } = req.params;
     const { isActive } = req.body;
@@ -482,4 +485,44 @@ export const getReceptionistDashboard = async (req, res) => {
       message: "Internal Server Error.",
     });
   }
+};
+
+export const getReceptionistById = async (req, res) => {
+    try {
+        const { receptionistId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(receptionistId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid receptionist ID.",
+            });
+        }
+
+        const receptionist = await Receptionist.findById(
+            receptionistId
+        ).populate(
+            "userId",
+            "name email isActive"
+        );
+
+        if (!receptionist) {
+            return res.status(404).json({
+                success: false,
+                message: "Receptionist not found.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            receptionist,
+        });
+
+    } catch (error) {
+        console.error("Get Receptionist By ID Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error.",
+        });
+    }
 };
