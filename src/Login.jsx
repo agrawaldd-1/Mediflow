@@ -25,7 +25,7 @@ const Login = () => {
                 break;
 
             case "receptionist":
-                navigate("/receptionist/dashboard");
+                navigate("/receptionist/");
                 break;
 
             case "doctor":

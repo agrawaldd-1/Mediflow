@@ -1,7 +1,7 @@
 import api from "./api";
 
 export const getReceptionistDashboard = async () => {
-    const { data } = await api.get("/receptionist/dashboard");
+    const { data } = await api.get("/receptionist/");
     return data;
 };
 

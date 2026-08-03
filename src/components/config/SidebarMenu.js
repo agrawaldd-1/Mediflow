@@ -16,7 +16,7 @@ export const sidebarMenus = {
         {
             title: "Dashboard",
             icon: FaHome,
-            path: "/receptionist/dashboard",
+            path: "/receptionist/",
         },
         {
             title: "Patients",
@@ -24,7 +24,7 @@ export const sidebarMenus = {
             children: [
                 {
                     title: "Register Patient",
-                    path: "/receptionist/patients/register",
+                    path: "/receptionist/register-patient",
                 },
                 {
                     title: "View Patients",
@@ -38,11 +38,11 @@ export const sidebarMenus = {
             children: [
                 {
                     title: "Book Appointment",
-                    path: "/receptionist/appointments/book",
+                    path: "/receptionist/book-appointment",
                 },
                 {
-                    title: "Cancel Appointment",
-                    path: "/receptionist/appointments/cancel",
+                    title: "View All Appointment",
+                    path: "/receptionist/appointments/view",
                 },
             ],
         },
@@ -62,7 +62,7 @@ export const sidebarMenus = {
             children: [
                 {
                     title: "Generate Invoice",
-                    path: "/receptionist/invoices/generate",
+                    path: "/receptionist/generate-invoice",
                 },
                 {
                     title: "Search Invoice",

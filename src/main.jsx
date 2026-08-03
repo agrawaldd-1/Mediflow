@@ -18,6 +18,16 @@ import AllDoctors from './components/AllDoctors.jsx'
 import RegisterReceptionist from './components/RegisterReceptionist.jsx'
 import SearchReceptionist from './components/SearchReceptionist.jsx'
 import UpdateReceptionistProfile from './components/UpdateReceptionistProfile.jsx'
+import RegisterPatient from './components/RegisterPatient.jsx'
+import ReceptionistLayout from './Layout/ReceptionistLayout.jsx'
+import ViewPatients from './components/ViewPatient.jsx'
+import UpdatePatientProfile from './components/UpdatePatientProfile.jsx'
+import BookAppointment from './components/BookAppointment.jsx'
+import ViewAllAppointments from './components/ViewAllAppointments.jsx'
+import DoctorAvailability from './components/DoctorAvailability.jsx'
+import GenerateInvoice from './components/GenerateInvoice.jsx'
+import SearchInvoice from './components/SearchInvoice.jsx'
+import ViewInvoice from './components/ViewInvoice.jsx'
 const router = createBrowserRouter([
   {
     path: "/", element: <App />,
@@ -41,7 +51,8 @@ const router = createBrowserRouter([
       <ProtectedRoute allowedRoles={["patient"]}>
         <PatientDashboard />
       </ProtectedRoute>
-    )
+    ),
+    
   },
   {
     path: "/admin/",
@@ -89,12 +100,54 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: "/receptionist/dashboard",
+    path: "/receptionist/",
     element: (
       <ProtectedRoute allowedRoles={["receptionist"]}>
-        <ReceptionistDashboard />
+        <ReceptionistLayout />
       </ProtectedRoute>
-    )
+    ),
+    children : [
+      {
+        index : true,
+        element : <ReceptionistDashboard/>
+      },
+      {
+        path : "register-patient",
+        element : <RegisterPatient/>
+      },
+      {
+        path : "patients",
+        element : <ViewPatients/>
+      },
+      {
+        path : "patients/update-profile/:patientId",
+        element : <UpdatePatientProfile/>
+      },
+      {
+        path : "book-appointment",
+        element : <BookAppointment/>
+      },
+      {
+        path : "appointments/view",
+        element : <ViewAllAppointments/>
+      },
+      {
+        path : "doctors",
+        element : <DoctorAvailability/>
+      },
+      {
+        path : "generate-invoice",
+        element : <GenerateInvoice/>
+      },
+      {
+        path : "invoices/search",
+        element : <SearchInvoice/>
+      },
+      {
+        path : "invoices/:invoiceNumber",
+        element : <ViewInvoice/>
+      }
+    ]
   },
 
 ])

@@ -38,7 +38,7 @@ const Navbar = () => {
                     </p>
                 </div>
 
-                <FiChevronDown className="text-lg text-slate-500" />
+                {/* <FiChevronDown className="text-lg text-slate-500" />y */}
             </button>
 
         </header>
