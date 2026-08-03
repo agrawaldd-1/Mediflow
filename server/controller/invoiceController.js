@@ -68,7 +68,7 @@ export const generateInvoice = async (req, res) => {
 
         const updatedServices = services.map((service) => {
             if (
-                !service.name ||
+                !service.serviceName ||
                 service.quantity == null ||
                 service.unitPrice == null
             ) {
@@ -80,8 +80,12 @@ export const generateInvoice = async (req, res) => {
             }
 
             return {
-                ...service,
-                totalPrice: service.quantity * service.unitPrice,
+                serviceName: service.serviceName.trim(),
+                quantity: Number(service.quantity),
+                unitPrice: Number(service.unitPrice),
+                totalPrice:
+                    Number(service.quantity) *
+                    Number(service.unitPrice),
             };
         });
 
@@ -116,7 +120,7 @@ export const generateInvoice = async (req, res) => {
         if (
             error.message === "Invalid service data." ||
             error.message ===
-                "Service quantity and price must be valid."
+            "Service quantity and price must be valid."
         ) {
             return res.status(400).json({
                 success: false,
@@ -186,9 +190,9 @@ export const viewInvoice = async (req, res) => {
 
 export const searchInvoice = async (req, res) => {
     try {
-        const { name } = req.query;
+        const { query } = req.query;
 
-        const search = name?.trim();
+        const search = query?.trim();
 
         if (!search) {
             return res.status(400).json({
@@ -256,6 +260,9 @@ export const searchInvoice = async (req, res) => {
 };
 
 export const updatePaymentStatus = async (req, res) => {
+    console.log("=== UPDATE PAYMENT STATUS API HIT ===");
+    console.log(req.params);
+    console.log(req.body);
     try {
         const { invoiceNumber } = req.params;
         const { paymentStatus } = req.body;
