@@ -49,3 +49,11 @@ export const getAllDoctors = async () => {
     const { data } = await api.get("/doctors");
     return data;
 };
+
+export const getDoctorAvailability = async (doctorId, date) => {
+    const { data } = await api.get(
+        `/appointments/doctor/${doctorId}/availability?date=${date}`
+    );
+
+    return data;
+};
