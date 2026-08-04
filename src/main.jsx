@@ -20,7 +20,7 @@ import SearchReceptionist from './components/SearchReceptionist.jsx'
 import UpdateReceptionistProfile from './components/UpdateReceptionistProfile.jsx'
 import RegisterPatient from './components/RegisterPatient.jsx'
 import ReceptionistLayout from './Layout/ReceptionistLayout.jsx'
-import ViewPatients from './components/ViewPatient.jsx'
+import ViewPatient from './components/ViewPatient.jsx'
 import UpdatePatientProfile from './components/UpdatePatientProfile.jsx'
 import BookAppointment from './components/BookAppointment.jsx'
 import ViewAllAppointments from './components/ViewAllAppointments.jsx'
@@ -28,6 +28,12 @@ import DoctorAvailability from './components/DoctorAvailability.jsx'
 import GenerateInvoice from './components/GenerateInvoice.jsx'
 import SearchInvoice from './components/SearchInvoice.jsx'
 import ViewInvoice from './components/ViewInvoice.jsx'
+import DoctorLayout from './Layout/DoctorLayout.jsx'
+import TodayAppointments from './components/TodaysAppointment.jsx'
+import CreatePrescription from './components/CreatePrescription.jsx'
+import PatientLayout from './Layout/PatientLayout.jsx'
+import ViewPrescription from './components/ViewPrescription.jsx'
+import { Toaster } from "react-hot-toast";
 const router = createBrowserRouter([
   {
     path: "/", element: <App />,
@@ -38,21 +44,41 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/doctor/dashboard",
+    path: "/doctor/",
     element: (
       <ProtectedRoute allowedRoles={["doctor"]}>
-        <DoctorDashboard />
-      </ProtectedRoute>
-    )
-  },
-  {
-    path: "/patient/dashboard",
-    element: (
-      <ProtectedRoute allowedRoles={["patient"]}>
-        <PatientDashboard />
+        <DoctorLayout />
       </ProtectedRoute>
     ),
-    
+    children: [
+      {
+        index: true,
+        element: <TodayAppointments />
+      },
+      {
+        path: "prescriptions/:appointmentId",
+        element: <CreatePrescription />
+      }
+    ]
+  },
+  {
+    path: "/patient/",
+    element: (
+      <ProtectedRoute allowedRoles={["patient"]}>
+        <PatientLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <PatientDashboard />
+      },
+      {
+        path: "prescriptions/:appointmentId",
+        element: <ViewPrescription />
+      }
+    ]
+
   },
   {
     path: "/admin/",
@@ -81,20 +107,20 @@ const router = createBrowserRouter([
         element: <UpdateDoctorProfile />
       },
       {
-        path : "all-doctors",
-        element : <AllDoctors/>
+        path: "all-doctors",
+        element: <AllDoctors />
       },
       {
-        path : "register-receptionist",
-        element : <RegisterReceptionist/>
+        path: "register-receptionist",
+        element: <RegisterReceptionist />
       },
       {
-        path : "receptionist/search",
-        element : <SearchReceptionist/>
+        path: "receptionist/search",
+        element: <SearchReceptionist />
       },
       {
-        path : "receptionist/update-profile/:receptionistId",
-        element : <UpdateReceptionistProfile/>
+        path: "receptionist/update-profile/:receptionistId",
+        element: <UpdateReceptionistProfile />
       }
 
     ]
@@ -106,46 +132,46 @@ const router = createBrowserRouter([
         <ReceptionistLayout />
       </ProtectedRoute>
     ),
-    children : [
+    children: [
       {
-        index : true,
-        element : <ReceptionistDashboard/>
+        index: true,
+        element: <ReceptionistDashboard />
       },
       {
-        path : "register-patient",
-        element : <RegisterPatient/>
+        path: "register-patient",
+        element: <RegisterPatient />
       },
       {
-        path : "patients",
-        element : <ViewPatients/>
+        path: "patients",
+        element: <ViewPatient />
       },
       {
-        path : "patients/update-profile/:patientId",
-        element : <UpdatePatientProfile/>
+        path: "patients/update-profile/:patientId",
+        element: <UpdatePatientProfile />
       },
       {
-        path : "book-appointment",
-        element : <BookAppointment/>
+        path: "book-appointment",
+        element: <BookAppointment />
       },
       {
-        path : "appointments/view",
-        element : <ViewAllAppointments/>
+        path: "appointments/view",
+        element: <ViewAllAppointments />
       },
       {
-        path : "doctors",
-        element : <DoctorAvailability/>
+        path: "doctors",
+        element: <DoctorAvailability />
       },
       {
-        path : "generate-invoice",
-        element : <GenerateInvoice/>
+        path: "generate-invoice",
+        element: <GenerateInvoice />
       },
       {
-        path : "invoices/search",
-        element : <SearchInvoice/>
+        path: "invoices/search",
+        element: <SearchInvoice />
       },
       {
-        path : "invoices/:invoiceNumber",
-        element : <ViewInvoice/>
+        path: "invoices/:invoiceNumber",
+        element: <ViewInvoice />
       }
     ]
   },
@@ -153,6 +179,10 @@ const router = createBrowserRouter([
 ])
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider><RouterProvider router={router}></RouterProvider></AuthProvider>
+    <AuthProvider><RouterProvider router={router}>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+      /></RouterProvider></AuthProvider>
   </StrictMode>,
 )

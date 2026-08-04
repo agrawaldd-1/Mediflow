@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { Doctor } from "../models/doctors.js";
 import { User } from "../models/user.js";
+import mongoose from "mongoose";
 
 export const registerDoctor = async (req, res) => {
     try {
@@ -147,9 +148,10 @@ export const getAllDoctors = async (req, res) => {
 
 export const searchDoctor = async (req, res) => {
     try {
-        const { name } = req.query;
+        console.log(req.query);
+        const { query } = req.query;
 
-        const search = name?.trim();
+        const search = query?.trim();
 
         if (!search) {
             return res.status(400).json({
@@ -279,8 +281,8 @@ export const updateDoctorProfile = async (req, res) => {
             experience == null ||
             consultationFee == null ||
             !workingHours ||
-            workingHours.start == null ||
-            workingHours.end == null
+            !workingHours.start ||
+            !workingHours.end
         ) {
             return res.status(400).json({
                 success: false,
@@ -319,7 +321,10 @@ export const updateDoctorProfile = async (req, res) => {
         doctor.qualification = normalizedQualification;
         doctor.experience = experience;
         doctor.consultationFee = consultationFee;
-        doctor.workingHours = workingHours;
+        doctor.workingHours = {
+            start: workingHours.start,
+            end: workingHours.end,
+        };
 
         await Promise.all([
             user.save(),
@@ -417,11 +422,12 @@ export const updateDoctorStatus = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Update Doctor Status Error:", error);
+    console.error(error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error.",
-        });
-    }
+    return res.status(500).json({
+        success: false,
+        message: error.message,
+    });
+}
 };
+

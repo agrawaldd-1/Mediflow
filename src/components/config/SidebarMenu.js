@@ -77,20 +77,16 @@ export const sidebarMenus = {
         {
             title: "Today's Appointments",
             icon: FaCalendarAlt,
-            path: "/doctor/dashboard",
+            path: "/doctor/",
         },
-        {
-            title: "Prescriptions",
-            icon: FaFileMedical,
-            path: "/doctor/prescriptions",
-        },
+        
     ],
 
     patient: [
         {
             title: "Dashboard",
             icon: FaHome,
-            path: "/patient/dashboard",
+            path: "/patient/",
         },
 
 
@@ -99,11 +95,7 @@ export const sidebarMenus = {
             icon: FaFileMedical,
             path: "/patient/prescriptions",
         },
-        {
-            title: "Profile",
-            icon: FaUser,
-            path: "/patient/profile",
-        },
+        
     ],
 
     admin: [
@@ -143,11 +135,7 @@ export const sidebarMenus = {
                 }
             ]
         },
-        {
-            title: "Patients",
-            icon: FaUsers,
-            path: "/admin/patients",
-        },
+        
     ],
 };
 

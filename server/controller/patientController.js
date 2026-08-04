@@ -211,52 +211,67 @@ export const getPatientById = async (req, res) => {
 };
 export const searchPatient = async (req, res) => {
     try {
-        const searchQuery = req.query.query?.trim();
 
-        if (!searchQuery) {
+        const query = req.query.query?.trim();
+
+        if (!query) {
             return res.status(400).json({
                 success: false,
                 message: "Search query is required.",
             });
         }
 
-        const patients = await Patient.find({
-            $or: [
-                { phone: { $regex: searchQuery, $options: "i" } },
-                { bloodGroup: { $regex: searchQuery, $options: "i" } },
-            ],
-        })
-            .populate({
-                path: "userId",
-                match: {
-                    name: { $regex: searchQuery, $options: "i" },
-                },
-                select: "name email isActive",
-            });
+        const patients = await Patient.find()
+            .populate(
+                "userId",
+                "name email isActive"
+            );
 
-        const filteredPatients = patients.filter(
-            (patient) =>
-                patient.userId ||
-                patient.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                patient.bloodGroup.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const filteredPatients = patients.filter((patient) => {
+
+            const name =
+                patient.userId?.name?.toLowerCase() || "";
+
+            const email =
+                patient.userId?.email?.toLowerCase() || "";
+
+            const phone =
+                patient.phone?.toLowerCase() || "";
+
+            const bloodGroup =
+                patient.bloodGroup?.toLowerCase() || "";
+
+            const search = query.toLowerCase();
+
+            return (
+                name.includes(search) ||
+                email.includes(search) ||
+                phone.includes(search) ||
+                bloodGroup.includes(search)
+            );
+
+        });
 
         return res.status(200).json({
             success: true,
             count: filteredPatients.length,
-            data: filteredPatients,
+            patients: filteredPatients,
         });
 
     } catch (error) {
-        console.error("Search Patient Error:", error);
+
+        console.error(
+            "Search Patient Error:",
+            error
+        );
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error.",
         });
+
     }
 };
-
 export const medicalHistory = async (req, res) => {
     try {
         const patient = await Patient.findOne({
@@ -556,9 +571,8 @@ export const updatePatientStatus = async (req, res) => {
         if (user.isActive === isActive) {
             return res.status(409).json({
                 success: false,
-                message: `Patient is already ${
-                    isActive ? "active" : "inactive"
-                }.`,
+                message: `Patient is already ${isActive ? "active" : "inactive"
+                    }.`,
             });
         }
 
@@ -568,9 +582,8 @@ export const updatePatientStatus = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: `Patient ${
-                isActive ? "activated" : "deactivated"
-            } successfully.`,
+            message: `Patient ${isActive ? "activated" : "deactivated"
+                } successfully.`,
             data: {
                 patientId: patient._id,
                 userId: user._id,

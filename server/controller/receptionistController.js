@@ -2,6 +2,11 @@ import { Receptionist } from "../models/receptionist.js";
 import { User } from "../models/user.js";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { Appointment } from "../models/appointments.js";
+
+import { Invoice } from "../models/invoice.js";
+
+
 export const registerReceptionist = async (req, res) => {
   try {
     const {

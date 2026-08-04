@@ -70,7 +70,7 @@ router.put(
 router.patch(
     "/:patientId/status",
     protect,
-    authorize(["admin"]),
+    authorize(["receptionist"]),
     updatePatientStatus
 );
 

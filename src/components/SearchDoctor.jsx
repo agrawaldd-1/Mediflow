@@ -62,7 +62,7 @@ const SearchDoctor = () => {
         console.log("DATA:", error.response?.data);
         console.log(error);
 
-        alert(error.response?.data?.message);
+        toast.error(error.response?.data?.message);
     }
 };
     return (

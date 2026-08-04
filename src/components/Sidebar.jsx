@@ -62,10 +62,9 @@ const Sidebar = () => {
                           <NavLink
                             to={child.path}
                             className={({ isActive }) =>
-                              `block rounded-lg px-3 py-2 text-sm transition ${
-                                isActive
-                                  ? "bg-blue-100 font-semibold text-blue-600"
-                                  : "text-slate-600 hover:bg-slate-100"
+                              `block rounded-lg px-3 py-2 text-sm transition ${isActive
+                                ? "bg-blue-100 font-semibold text-blue-600"
+                                : "text-slate-600 hover:bg-slate-100"
                               }`
                             }
                           >
@@ -83,12 +82,11 @@ const Sidebar = () => {
               <li key={item.title}>
                 <NavLink
                   to={item.path}
-                  end={item.path === "/admin"}
+                  end={item.path.endsWith("/")}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-xl px-4 py-3 transition ${
-                      isActive
-                        ? "bg-blue-100 font-semibold text-blue-600"
-                        : "text-slate-700 hover:bg-slate-100"
+                    `flex items-center gap-3 rounded-xl px-4 py-3 transition ${isActive
+                      ? "bg-blue-100 font-semibold text-blue-600"
+                      : "text-slate-700 hover:bg-slate-100"
                     }`
                   }
                 >

@@ -22,8 +22,8 @@ const RegisterDoctor = () => {
       experience: Number(data.experience),
       consultationFee: Number(data.consultationFee),
       workingHours: {
-        start: Number(data.workingHours.start),
-        end: Number(data.workingHours.end),
+        start: (data.workingHours.start),
+        end: (data.workingHours.end),
       },
     };
 
@@ -220,7 +220,7 @@ const RegisterDoctor = () => {
             </div>
 
           </div>
-                    <div>
+          <div>
             <h2 className="mb-4 text-lg font-semibold text-slate-800">
               Working Hours
             </h2>
@@ -239,16 +239,16 @@ const RegisterDoctor = () => {
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0097B2] focus:ring-4 focus:ring-[#0097B2]/20"
                 >
                   <option value="">Select Start Time</option>
-                  <option value="9">09:00 AM</option>
-                  <option value="10">10:00 AM</option>
-                  <option value="11">11:00 AM</option>
-                  <option value="12">12:00 PM</option>
-                  <option value="13">01:00 PM</option>
-                  <option value="14">02:00 PM</option>
-                  <option value="15">03:00 PM</option>
-                  <option value="16">04:00 PM</option>
-                  <option value="17">05:00 PM</option>
-                  <option value="18">06:00 PM</option>
+                  <option value="09:00">09:00 AM</option>
+                  <option value="10:00">10:00 AM</option>
+                  <option value="11:00">11:00 AM</option>
+                  <option value="12:00">12:00 PM</option>
+                  <option value="13:00">01:00 PM</option>
+                  <option value="14:00">02:00 PM</option>
+                  <option value="15:00">03:00 PM</option>
+                  <option value="16:00">04:00 PM</option>
+                  <option value="17:00">05:00 PM</option>
+                  <option value="18:00">06:00 PM</option>
                 </select>
 
                 {errors.workingHours?.start && (
@@ -269,18 +269,17 @@ const RegisterDoctor = () => {
                   })}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0097B2] focus:ring-4 focus:ring-[#0097B2]/20"
                 >
-                  <option value="">Select End Time</option>
-                  <option value="10">10:00 AM</option>
-                  <option value="11">11:00 AM</option>
-                  <option value="12">12:00 PM</option>
-                  <option value="13">01:00 PM</option>
-                  <option value="14">02:00 PM</option>
-                  <option value="15">03:00 PM</option>
-                  <option value="16">04:00 PM</option>
-                  <option value="17">05:00 PM</option>
-                  <option value="18">06:00 PM</option>
-                  <option value="19">07:00 PM</option>
-                  <option value="20">08:00 PM</option>
+                  <option value="10:00">10:00 AM</option>
+                  <option value="11:00">11:00 AM</option>
+                  <option value="12:00">12:00 PM</option>
+                  <option value="13:00">01:00 PM</option>
+                  <option value="14:00">02:00 PM</option>
+                  <option value="15:00">03:00 PM</option>
+                  <option value="16:00">04:00 PM</option>
+                  <option value="17:00">05:00 PM</option>
+                  <option value="18:00">06:00 PM</option>
+                  <option value="19:00">07:00 PM</option>
+                  <option value="20:00">08:00 PM</option>
                 </select>
 
                 {errors.workingHours?.end && (

@@ -29,11 +29,11 @@ const Login = () => {
                 break;
 
             case "doctor":
-                navigate("/doctor/dashboard");
+                navigate("/doctor/");
                 break;
 
             case "patient":
-                navigate("/patient/dashboard");
+                navigate("/patient/");
                 break;
 
             default:

@@ -4,9 +4,10 @@ import {
     searchDoctor,
     getDoctorAvailability,
 } from "../services/doctorService";
+import toast from "react-hot-toast";
 
 const DoctorAvailability = () => {
-
+    const [bookedSlots, setBookedSlots] = useState([]);
     const [search, setSearch] = useState("");
     const [doctor, setDoctor] = useState(null);
     const [date, setDate] = useState("");
@@ -31,7 +32,7 @@ const DoctorAvailability = () => {
 
             } else {
 
-                alert("Doctor not found.");
+                toast.error("Doctor not found.");
 
                 setDoctor(null);
 
@@ -39,7 +40,7 @@ const DoctorAvailability = () => {
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Failed to search doctor."
             );
@@ -56,7 +57,7 @@ const DoctorAvailability = () => {
 
         if (!doctor || !date) {
 
-            alert("Select doctor and date first.");
+            toast("Select doctor and date first.");
 
             return;
 
@@ -72,10 +73,11 @@ const DoctorAvailability = () => {
             );
 
             setSlots(response.availableSlots);
+            setBookedSlots(response.bookedSlots);
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Failed to fetch availability."
             );
@@ -141,7 +143,7 @@ const DoctorAvailability = () => {
                     <div className="mt-8 rounded-xl border p-6">
 
                         <h2 className="text-2xl font-bold text-slate-800">
-                            Dr. {doctor.userId.name}
+                            {doctor.userId.name}
                         </h2>
 
                         <p className="mt-1 text-slate-500">
@@ -211,11 +213,22 @@ const DoctorAvailability = () => {
 
                                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 
-                                    {slots.map((slot, index) => (
+                                    {slots.map((slot) => (
 
                                         <div
-                                            key={index}
-                                            className="rounded-lg border border-green-200 bg-green-50 py-4 text-center font-semibold text-green-700 transition hover:border-green-500 hover:bg-green-100"
+                                            key={slot}
+                                            className="rounded-lg border border-green-300 bg-green-50 py-4 text-center font-semibold text-green-700"
+                                        >
+                                            {slot}
+                                        </div>
+
+                                    ))}
+
+                                    {bookedSlots.map((slot) => (
+
+                                        <div
+                                            key={slot}
+                                            className="rounded-lg border border-red-300 bg-red-50 py-4 text-center font-semibold text-red-700"
                                         >
                                             {slot}
                                         </div>

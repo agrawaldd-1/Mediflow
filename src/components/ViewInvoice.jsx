@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
     getInvoiceByNumber,
     updatePaymentStatus,
@@ -36,7 +37,7 @@ const ViewInvoice = () => {
 
     } catch (error) {
 
-        alert(
+        toast.error(
             error.response?.data?.message ||
             "Failed to update payment status."
         );
@@ -60,7 +61,7 @@ const ViewInvoice = () => {
 
                 console.error(error);
 
-                alert(
+                toast.error(
                     error.response?.data?.message ||
                     "Failed to load invoice."
                 );

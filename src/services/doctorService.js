@@ -57,3 +57,5 @@ export const getDoctorAvailability = async (doctorId, date) => {
 
     return data;
 };
+
+

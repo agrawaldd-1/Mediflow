@@ -3,6 +3,7 @@ import { User } from "../models/user.js";
 import { Doctor } from "../models/doctors.js";
 import { Appointment } from "../models/appointments.js";
 import mongoose from "mongoose";
+import { Invoice } from "../models/invoice.js";
 
 export const bookAppointment = async (req, res) => {
     try {
@@ -13,7 +14,6 @@ export const bookAppointment = async (req, res) => {
             reasonForVisit,
         } = req.body;
 
-        
         if (!patientId || !doctorId || !appointmentDateTime || !reasonForVisit) {
             return res.status(400).json({
                 success: false,
@@ -21,7 +21,6 @@ export const bookAppointment = async (req, res) => {
             });
         }
 
-        
         if (
             !mongoose.Types.ObjectId.isValid(patientId) ||
             !mongoose.Types.ObjectId.isValid(doctorId)
@@ -34,7 +33,6 @@ export const bookAppointment = async (req, res) => {
 
         const appointmentTime = new Date(appointmentDateTime);
 
- 
         if (isNaN(appointmentTime.getTime())) {
             return res.status(400).json({
                 success: false,
@@ -42,7 +40,6 @@ export const bookAppointment = async (req, res) => {
             });
         }
 
-      
         if (appointmentTime <= new Date()) {
             return res.status(400).json({
                 success: false,
@@ -102,11 +99,13 @@ export const bookAppointment = async (req, res) => {
             });
         }
 
-        const appointmentHour = appointmentTime.getHours();
+        const appointmentTimeString = appointmentTime
+            .toTimeString()
+            .slice(0, 5);
 
         if (
-            appointmentHour < doctor.workingHours.start ||
-            appointmentHour >= doctor.workingHours.end
+            appointmentTimeString < doctor.workingHours.start ||
+            appointmentTimeString >= doctor.workingHours.end
         ) {
             return res.status(400).json({
                 success: false,
@@ -139,6 +138,7 @@ export const bookAppointment = async (req, res) => {
             message: "Appointment booked successfully.",
             appointment,
         });
+
     } catch (error) {
         console.error(error);
 
@@ -302,8 +302,10 @@ export const getDoctorsAvailability = async (req, res) => {
             });
         }
 
-        const doctor = await Doctor.findById(doctorId)
-            .populate("userId", "isActive");
+        const doctor = await Doctor.findById(doctorId).populate(
+            "userId",
+            "isActive"
+        );
 
         if (!doctor) {
             return res.status(404).json({
@@ -347,20 +349,31 @@ export const getDoctorsAvailability = async (req, res) => {
 
         const availableSlots = [];
 
-        for (
-            let hour = doctor.workingHours.start;
-            hour < doctor.workingHours.end;
-            hour++
-        ) {
-            for (const minute of [0, 30]) {
-                const slot = `${String(hour).padStart(2, "0")}:${String(
-                    minute
-                ).padStart(2, "0")}`;
+        const [startHour, startMinute] = doctor.workingHours.start
+            .split(":")
+            .map(Number);
 
-                if (!bookedSlots.has(slot)) {
-                    availableSlots.push(slot);
-                }
+        const [endHour, endMinute] = doctor.workingHours.end
+            .split(":")
+            .map(Number);
+
+        const currentSlot = new Date(selectedDate);
+        currentSlot.setHours(startHour, startMinute, 0, 0);
+
+        const endSlot = new Date(selectedDate);
+        endSlot.setHours(endHour, endMinute, 0, 0);
+
+        while (currentSlot < endSlot) {
+            const slotHour = String(currentSlot.getHours()).padStart(2, "0");
+            const slotMinute = String(currentSlot.getMinutes()).padStart(2, "0");
+
+            const slot = `${slotHour}:${slotMinute}`;
+
+            if (!bookedSlots.has(slot)) {
+                availableSlots.push(slot);
             }
+
+            currentSlot.setMinutes(currentSlot.getMinutes() + 30);
         }
 
         return res.status(200).json({
@@ -368,6 +381,7 @@ export const getDoctorsAvailability = async (req, res) => {
             date,
             doctorId,
             availableSlots,
+            bookedSlots: [...bookedSlots],
         });
 
     } catch (error) {
@@ -379,7 +393,6 @@ export const getDoctorsAvailability = async (req, res) => {
         });
     }
 };
-
 export const getAllAppointments = async (req, res) => {
     try {
         const currentDateTime = new Date();
@@ -539,13 +552,10 @@ export const getPatientDetails = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            patient: appointment.patientId,
-            appointment: {
-                appointmentDateTime: appointment.appointmentDateTime,
-                reasonForVisit: appointment.reasonForVisit,
-                status: appointment.status,
-            },
+            appointment,
         });
+
+
 
     } catch (error) {
         console.error("Get Patient Details Error:", error);

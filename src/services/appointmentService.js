@@ -22,3 +22,12 @@ export const cancelAppointment = async (appointmentId) => {
     return data;
 };
 
+export const getPatientDetails = async (appointmentId) => {
+
+    const { data } = await api.get(
+        `/appointments/${appointmentId}/patient`
+    );
+
+    return data;
+
+};

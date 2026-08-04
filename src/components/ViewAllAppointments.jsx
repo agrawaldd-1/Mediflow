@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { cancelAppointment, getAllAppointments } from "../services/appointmentService";
-
+import toast from "react-hot-toast";
 const ViewAllAppointments = () => {
 
     const [appointments, setAppointments] = useState([]);
@@ -40,11 +40,11 @@ const ViewAllAppointments = () => {
 
         const filtered = appointments.filter((appointment) =>
 
-            appointment.patientId.userId.name
+            appointment.patientId?.userId?.name
                 .toLowerCase()
                 .includes(value) ||
 
-            appointment.doctorId.userId.name
+            appointment.doctorId?.userId?.name
                 .toLowerCase()
                 .includes(value)
 
@@ -64,7 +64,7 @@ const ViewAllAppointments = () => {
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Failed to cancel appointment."
             );
@@ -141,11 +141,11 @@ const ViewAllAppointments = () => {
                             <div>
 
                                 <h2 className="text-2xl font-bold text-slate-800">
-                                    {appointment.patientId.userId}
+                                    {appointment.patientId?.userId?.name}
                                 </h2>
 
                                 <p className="mt-1 text-slate-500">
-                                     {appointment.doctorId.userId}
+                                     {appointment.doctorId?.userId?.name}
                                 </p>
 
                             </div>

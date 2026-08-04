@@ -5,8 +5,8 @@ import {
     getAllPatients,
     updatePatientStatus,
 } from "../services/patientService";
-
-const ViewPatients = () => {
+import toast from "react-hot-toast";
+const ViewPatient = () => {
 
     const navigate = useNavigate();
 
@@ -23,6 +23,11 @@ const ViewPatients = () => {
         try {
 
             const response = await getAllPatients();
+            console.log(response.patients);
+
+response.patients.forEach((patient) => {
+    console.log(patient.userId);
+});
 
             setPatients(response.patients);
             setFilteredPatients(response.patients);
@@ -43,8 +48,8 @@ const ViewPatients = () => {
         const value = search.toLowerCase();
 
         const filtered = patients.filter((patient) =>
-            patient.userId.name.toLowerCase().includes(value) ||
-            patient.userId.email.toLowerCase().includes(value) ||
+            patient.userId?.name.toLowerCase().includes(value) ||
+            patient.userId?.email.toLowerCase().includes(value) ||
             patient.phone.includes(value)
         );
 
@@ -65,7 +70,7 @@ const ViewPatients = () => {
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Failed to update patient status."
             );
@@ -143,7 +148,7 @@ const ViewPatients = () => {
                             <div>
 
                                 <h2 className="text-2xl font-bold text-slate-800">
-                                    {patient.userId.name}
+                                    {patient.userId?.name}
                                 </h2>
 
                                 <p className="mt-1 text-slate-500">
@@ -154,12 +159,12 @@ const ViewPatients = () => {
 
                             <span
                                 className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                                    patient.userId.isActive
+                                    patient.userId?.isActive
                                         ? "bg-green-100 text-green-700"
                                         : "bg-red-100 text-red-700"
                                 }`}
                             >
-                                {patient.userId.isActive
+                                {patient.userId?.isActive
                                     ? "Active"
                                     : "Inactive"}
                             </span>
@@ -174,7 +179,7 @@ const ViewPatients = () => {
                                 </p>
 
                                 <p className="mt-1 text-lg font-semibold text-slate-800">
-                                    {patient.userId.email}
+                                    {patient.userId?.email}
                                 </p>
 
                             </div>
@@ -274,16 +279,16 @@ const ViewPatients = () => {
                                 onClick={() =>
                                     handleStatus(
                                         patient._id,
-                                        patient.userId.isActive
+                                        patient.userId?.isActive
                                     )
                                 }
                                 className={`rounded-lg px-6 py-3 font-semibold text-white transition ${
-                                    patient.userId.isActive
+                                    patient.userId?.isActive
                                         ? "bg-red-500 hover:bg-red-600"
                                         : "bg-green-600 hover:bg-green-700"
                                 }`}
                             >
-                                {patient.userId.isActive
+                                {patient.userId?.isActive
                                     ? "Deactivate"
                                     : "Activate"}
                             </button>
@@ -314,4 +319,4 @@ const ViewPatients = () => {
 
 };
 
-export default ViewPatients;
+export default ViewPatient;

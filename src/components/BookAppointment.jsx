@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { searchPatient } from "../services/patientService";
 import { searchDoctor } from "../services/doctorService";
 import { bookAppointment } from "../services/appointmentService";
-
+import toast from "react-hot-toast";
 const BookAppointment = () => {
 
     const [patient, setPatient] = useState(null);
@@ -43,12 +43,12 @@ const BookAppointment = () => {
                 setPatient(response.patients[0]);
             } else {
                 setPatient(null);
-                alert("Patient not found.");
+                toast.error("Patient not found.");
             }
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Unable to search patient."
             );
@@ -77,12 +77,12 @@ const BookAppointment = () => {
                 setDoctor(response.doctors[0]);
             } else {
                 setDoctor(null);
-                alert("Doctor not found.");
+                toast.error("Doctor not found.");
             }
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Unable to search doctor."
             );

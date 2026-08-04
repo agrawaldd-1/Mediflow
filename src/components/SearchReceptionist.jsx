@@ -70,7 +70,7 @@ const SearchReceptionist = () => {
             console.log(error.response?.data);
             console.log(error);
 
-            alert(error.response?.data?.message || "Failed");
+            toast.error(error.response?.data?.message || "Failed");
         }
     };
 

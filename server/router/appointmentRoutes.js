@@ -5,11 +5,20 @@ import {
     getTodayAppointment,
     getPatientDetails,
     upcomingAppointments,
+    bookAppointment,
+    cancelAppointment
 } from "../controller/appointmentController.js";
+
 
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+router.post(
+    "/",
+    protect,
+    authorize(["receptionist"]),
+    bookAppointment
+);
 
 router.get(
     "/doctor/:doctorId/availability",
@@ -44,6 +53,12 @@ router.get(
     protect,
     authorize(["patient"]),
     upcomingAppointments
+);
+router.patch(
+    "/:appointmentId/cancel",
+    protect,
+    authorize(["receptionist"]),
+    cancelAppointment
 );
 
 export default router;

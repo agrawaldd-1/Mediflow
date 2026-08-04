@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllDoctors, updateDoctorStatus } from "../services/doctorService";
-
+import toast from "react-hot-toast";
 const AllDoctors = () => {
 
     const navigate = useNavigate();
@@ -66,7 +66,7 @@ const AllDoctors = () => {
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Failed to update doctor status."
             );
