@@ -10,7 +10,7 @@ import {
 } from "../controller/appointmentController.js";
 
 
-import { protect, authorize } from "../middleware/authMiddleware.js";
+import { protect, authorize } from "../Middleware/authMiddleware.js";
 
 const router = express.Router();
 router.post(
