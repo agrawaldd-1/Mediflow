@@ -1,12 +1,12 @@
 import React from "react";
 import "./App.css";
-import Hero from "./components/hero";
-import About from "./components/About";
-import Services from "./components/Services";
-import Doctors from "./components/Doctors"
-import Testimonials from "./components/Testimonials"
-import Emergency from "./components/Emergency"
-import Footer from "./components/Footer"
+import Hero from "./components/Hero.jsx";
+import About from "./components/About.jsx";
+import Services from "./components/Services.jsx";
+import Doctors from "./components/Doctors.jsx";
+import Testimonials from "./components/Testimonials.jsx";
+import Emergency from "./components/Emergency.jsx";
+import Footer from "./components/Footer.jsx";
 import Login from "./Login.jsx";
 import { createBrowserRouter, RouterContextProvider, RouterProvider, useNavigate } from 'react-router-dom'
 
