@@ -1,6 +1,7 @@
 import React from "react";
 import doctor1 from "../assets/dr-revanur-vishwanath.png";
-
+import doctor2 from "../assets/dr-subhashini-prabhakar.jpg";
+import doctor3 from "../assets/dr-abhishek-pande-669522c37f44b.avif";
 const Doctors = () => {
   return (
     <section className="w-[90%] mx-auto my-24">
@@ -26,7 +27,7 @@ const Doctors = () => {
         <div className="bg-white rounded-[18px] overflow-hidden text-center shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-2.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
           <img
             src={doctor1}
-            alt="Dr. Sarah Johnson"
+            alt="Dr. Revanur Vishwanath"
             className="w-full h-72 object-cover"
           />
 
@@ -46,20 +47,20 @@ const Doctors = () => {
         {/* Doctor Card 2 */}
         <div className="bg-white rounded-[18px] overflow-hidden text-center shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-2.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
           <img
-            src={doctor1}
-            alt="Dr. Sarah Johnson"
+            src={doctor2}
+            alt="Dr. Subhashini Prabhakar"
             className="w-full h-72 object-cover"
           />
 
           <div className="p-6">
             <h3 className="text-xl font-semibold text-[#16324F] mb-2">
-              Dr. Sarah Johnson
+              Dr. Subhashini Prabhakar
             </h3>
 
-            <p className="text-[#0097b2] font-medium mb-2">Cardiologist</p>
+            <p className="text-[#0097b2] font-medium mb-2">Neurologist</p>
 
             <span className="text-[#666] text-sm">
-              15+ Years Experience
+              46+ Years Experience
             </span>
           </div>
         </div>
@@ -67,20 +68,20 @@ const Doctors = () => {
         {/* Doctor Card 3 */}
         <div className="bg-white rounded-[18px] overflow-hidden text-center shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-2.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
           <img
-            src={doctor1}
-            alt="Dr. Sarah Johnson"
+            src={doctor3}
+            alt="Dr. Abhishek Pande"
             className="w-full h-72 object-cover"
           />
 
           <div className="p-6">
             <h3 className="text-xl font-semibold text-[#16324F] mb-2">
-              Dr. Sarah Johnson
+              Dr. Abhishek Pande
             </h3>
 
-            <p className="text-[#0097b2] font-medium mb-2">Cardiologist</p>
+            <p className="text-[#0097b2] font-medium mb-2">General Physician</p>
 
             <span className="text-[#666] text-sm">
-              15+ Years Experience
+              17 Years Experience
             </span>
           </div>
         </div>
